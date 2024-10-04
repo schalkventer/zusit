@@ -1,4 +1,4 @@
-# 🐗 Zustate
+# 🐼 Zustate
 
 ## API
 
