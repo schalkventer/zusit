@@ -35,7 +35,7 @@
  * JOIN operations.
  */
 
-import * as schema from "./data.schema";
+import * as schema from "./schema";
 import { v4 as createId } from "uuid";
 
 /**
@@ -58,7 +58,8 @@ export const createAggregate =
     const result: Record<string, number> = {};
 
     array.forEach((value) => {
-      const inner = typeof operation === "function" ? operation(value) : value[operation];
+      const inner =
+        typeof operation === "function" ? operation(value) : value[operation];
 
       const innerAsString = String(inner);
       const current = result[innerAsString] || 0;
@@ -74,11 +75,17 @@ export const createAggregate =
  * will be thrown if no match is found, for a version that rather falls back to
  * `null` use `getNullable`.
  */
-export const createGet = <Item extends schema.BaseItem>(inner: () => Item[]) => {
+export const createGet = <Item extends schema.BaseItem>(
+  inner: () => Item[]
+) => {
   const result = (operation: unknown, count = 0, assert: unknown) => {
     const list = inner();
 
-    if (typeof operation === "string" && typeof count === "number" && count > 1) {
+    if (
+      typeof operation === "string" &&
+      typeof count === "number" &&
+      count > 1
+    ) {
       throw new Error("Cannot use ID with count");
     }
 
@@ -120,7 +127,9 @@ export const createGet = <Item extends schema.BaseItem>(inner: () => Item[]) => 
 /**
  * ...
  */
-export const createAdd = <Item extends schema.BaseItem>(array: () => Item[]) => {
+export const createAdd = <Item extends schema.BaseItem>(
+  array: () => Item[]
+) => {
   return (
     items: (Omit<Item, "id" | "updated"> & { id?: string; updated?: number })[],
     position?: "start" | "end"
@@ -147,11 +156,16 @@ export const createAdd = <Item extends schema.BaseItem>(array: () => Item[]) => 
 /**
  * A
  */
-export const createRemove = <Item extends schema.BaseItem>(array: () => Item[]) => {
+export const createRemove = <Item extends schema.BaseItem>(
+  array: () => Item[]
+) => {
   const source = array();
 
   return (items: Item[] | string[]): Item[] => {
-    const stringArray = typeof items[0] === "string" ? (items as string[]) : (items as Item[]).map((item) => item.id);
+    const stringArray =
+      typeof items[0] === "string"
+        ? (items as string[])
+        : (items as Item[]).map((item) => item.id);
 
     const result: Item[] = source.filter((item) => {
       if (stringArray.includes(item.id)) return false;
@@ -165,8 +179,13 @@ export const createRemove = <Item extends schema.BaseItem>(array: () => Item[]) 
 /**
  * A
  */
-export const createSet = <Item extends schema.BaseItem>(array: () => Item[]) => {
-  return (items: (Partial<Omit<Item, "id">> & { id: string })[], strict?: boolean): Item[] => {
+export const createSet = <Item extends schema.BaseItem>(
+  array: () => Item[]
+) => {
+  return (
+    items: (Partial<Omit<Item, "id">> & { id: string })[],
+    strict?: boolean
+  ): Item[] => {
     let stringArray = items.map((item) => item.id);
 
     const result = array().map((current) => {

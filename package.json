@@ -1,8 +1,8 @@
 {
   "name": "zustate",
   "type": "module",
-  "version": "1.0.0",
-  "description": "A high-level Zustand abstraction that enforces an opinionated data structure with associated operation helpers.",
+  "version": "1.0.1",
+  "description": "A high-level Zustand abstraction that enforces an opinionated data structure with associated operations as methods.",
   "author": "Schalk Venter <venterschalk@gmail.com> (http://schalkventer.me/)",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
@@ -17,6 +17,7 @@
     "build": "microbundle"
   },
   "devDependencies": {
+    "@types/uuid": "^10.0.0",
     "microbundle": "^0.15.1",
     "zustand": "^5.0.0-rc.2"
   },
@@ -29,5 +30,8 @@
     "store"
   ],
   "bugs": "https://github.com/schalkventer/zustate/issues",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^10.0.0"
+  }
 }
