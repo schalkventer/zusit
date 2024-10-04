@@ -1,0 +1,33 @@
+{
+  "name": "zustate",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "A high-level Zustand abstraction that enforces an opinionated data structure with associated operation helpers.",
+  "author": "Schalk Venter <venterschalk@gmail.com> (http://schalkventer.me/)",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.modern.js"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.module.js",
+  "unpkg": "./dist/index.umd.js",
+  "scripts": {
+    "build": "microbundle"
+  },
+  "devDependencies": {
+    "microbundle": "^0.15.1",
+    "zustand": "^5.0.0-rc.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/schalkventer/zustate.git"
+  },
+  "keywords": [
+    "zustand",
+    "store"
+  ],
+  "bugs": "https://github.com/schalkventer/zustate/issues",
+  "license": "MIT"
+}
