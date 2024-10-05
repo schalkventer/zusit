@@ -1,6 +1,6 @@
 # 🐼 Zustate
 
-**A client-first Zustand data abstraction that enforces high-level, well-reasoned structures, interfaces and conventions.**
+**A client-first Zustand data abstraction that enforces various high-level, well-reasoned interfaces and conventions.**
 
 ## Basic Example
 
