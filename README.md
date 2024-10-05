@@ -1,3 +1,3 @@
 # 🐼 Zustate
 
-**A client-first Zustand data abstraction that enforces opinionated/standardised structures, operations and conventions.**
+**A client-first Zustand data abstraction that enforces high-level, well-reasoned structures and conventions.**
