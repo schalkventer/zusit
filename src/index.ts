@@ -2,7 +2,7 @@ import { createStore, useStore } from "zustand";
 import * as schema from "./schema";
 import * as operations from "./operations";
 
-export const createData = <Store extends schema.BaseStore>(props: {
+export const create = <Store extends schema.BaseStore>(props: {
   initial: Store;
 }): schema.Data<Store> => {
   const { initial } = props;
@@ -94,3 +94,11 @@ export const createData = <Store extends schema.BaseStore>(props: {
     collections,
   };
 };
+
+const zustate = {
+  create,
+};
+
+export type { Data as Instance } from "./schema";
+
+export default zustate;
