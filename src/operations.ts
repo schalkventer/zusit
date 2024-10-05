@@ -92,6 +92,11 @@ type Match<Item extends BaseItem> = {
 export type Get<Item extends BaseItem> = {
   (operation: null, count?: undefined, assert?: undefined): null;
   (
+    operation: null | string,
+    count?: undefined,
+    assert?: undefined
+  ): Item | null;
+  (
     operation: string | Predicate<Item> | Match<Item>,
     count: 1,
     assert: true
