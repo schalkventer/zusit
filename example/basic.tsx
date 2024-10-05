@@ -1,11 +1,5 @@
-# 🐼 Zustate
-
-**A high-level Zustand abstraction that enforces an opinionated data structure with associated operations as methods.**
-
-## Basic Example
-
-```tsx
 import { create, Store } from "zustore";
+
 const FILTER_OPTIONS = ["all", "completed", "active"] as const;
 
 type Task = {
@@ -93,4 +87,3 @@ export const App = () => {
     </div>
   );
 };
-```

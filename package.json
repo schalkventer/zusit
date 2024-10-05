@@ -1,7 +1,7 @@
 {
   "name": "zustate",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "A high-level Zustand abstraction that enforces an opinionated data structure with associated operations as methods.",
   "author": "Schalk Venter <venterschalk@gmail.com> (http://schalkventer.me/)",
   "source": "src/index.ts",
@@ -32,6 +32,7 @@
   "bugs": "https://github.com/schalkventer/zustate/issues",
   "license": "MIT",
   "dependencies": {
+    "@donedeal0/superdiff": "^2.0.0",
     "uuid": "^10.0.0"
   }
 }

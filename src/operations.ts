@@ -35,8 +35,19 @@
  * JOIN operations.
  */
 
-import * as schema from "./schema";
 import { v4 as createId } from "uuid";
+
+export type Value = string | number | boolean | null;
+
+export type BaseItem = {
+  [Key: string]: Value;
+  id: string;
+  updated: number;
+};
+
+export type Aggregate<Item extends BaseItem> = (
+  operation: string | ((item: Item) => string)
+) => Record<string, number>;
 
 /**
  * A method that maps over a specific key in all objects inside the list, and
@@ -52,7 +63,7 @@ import { v4 as createId } from "uuid";
  * string.
  */
 export const createAggregate =
-  <Item extends schema.BaseItem>(inner: () => Item[]): schema.Aggregate<Item> =>
+  <Item extends BaseItem>(inner: () => Item[]): Aggregate<Item> =>
   (operation) => {
     const array = inner();
     const result: Record<string, number> = {};
@@ -69,15 +80,66 @@ export const createAggregate =
     return result;
   };
 
+type Predicate<Item extends BaseItem> = (item: Item) => boolean;
+
+type Match<Item extends BaseItem> = {
+  [Key in keyof Item]: Value | Value[];
+};
+
+/**
+ *
+ */
+export type Get<Item extends BaseItem> = {
+  (
+    operation: string | Predicate<Item> | Match<Item>,
+    count: 1,
+    assert: true
+  ): Item;
+  (
+    operation: string[] | Predicate<Item> | Match<Item>,
+    count: number,
+    assert: true
+  ): Item[];
+  (
+    operation: string | Predicate<Item> | Match<Item>,
+    count?: 1,
+    assert?: false | undefined
+  ): Item | null;
+  (
+    operation: string[] | Predicate<Item> | Match<Item>,
+    count: number,
+    assert?: boolean
+  ): Item[];
+  (
+    operation: string[] | Predicate<Item> | Match<Item>,
+    count?: number,
+    assert?: boolean
+  ): Item[];
+};
+
+const createIterator = (operation: any) => {
+  if (typeof operation === "function") return operation;
+
+  if (Array.isArray(operation)) {
+    return (inner: any) => operation.includes(inner.id);
+  }
+
+  const entries = Object.entries(operation);
+
+  return (inner: any) =>
+    entries.every(([key, value]) => {
+      if (Array.isArray(value)) return value.includes(inner[key]);
+      return inner[key] === value;
+    });
+};
+
 /**
  * Retrieves a single object from the list. Accepts either a string ID value or
  * a predicate function that resolves to `true` on match. Note that an error
  * will be thrown if no match is found, for a version that rather falls back to
  * `null` use `getNullable`.
  */
-export const createGet = <Item extends schema.BaseItem>(
-  inner: () => Item[]
-) => {
+export const createGet = <Item extends BaseItem>(inner: () => Item[]) => {
   const result = (operation: unknown, count = 0, assert: unknown) => {
     const list = inner();
 
@@ -95,22 +157,15 @@ export const createGet = <Item extends schema.BaseItem>(
       return result || null;
     }
 
-    const fn =
-      typeof operation === "function"
-        ? operation
-        : (inner: Item) => {
-            if (!Array.isArray(operation)) {
-              throw new Error("Item not found");
-            }
+    if (typeof operation !== "function") {
+    }
 
-            return operation.includes(inner.id);
-          };
-
+    const iterator = createIterator(operation);
     let result: Item[] = [];
 
     for (const item of list) {
       if (count !== 0 && result.length >= count) break;
-      if (!fn(item)) continue;
+      if (!iterator(item)) continue;
       result.push(item);
     }
 
@@ -121,15 +176,13 @@ export const createGet = <Item extends schema.BaseItem>(
     return result;
   };
 
-  return result as schema.Get<Item>;
+  return result as Get<Item>;
 };
 
 /**
  * ...
  */
-export const createAdd = <Item extends schema.BaseItem>(
-  array: () => Item[]
-) => {
+export const createAdd = <Item extends BaseItem>(array: () => Item[]) => {
   return (
     items: (Omit<Item, "id" | "updated"> & { id?: string; updated?: number })[],
     position?: "start" | "end"
@@ -156,9 +209,7 @@ export const createAdd = <Item extends schema.BaseItem>(
 /**
  * A
  */
-export const createRemove = <Item extends schema.BaseItem>(
-  array: () => Item[]
-) => {
+export const createRemove = <Item extends BaseItem>(array: () => Item[]) => {
   const source = array();
 
   return (items: Item[] | string[]): Item[] => {
@@ -179,9 +230,7 @@ export const createRemove = <Item extends schema.BaseItem>(
 /**
  * A
  */
-export const createSet = <Item extends schema.BaseItem>(
-  array: () => Item[]
-) => {
+export const createSet = <Item extends BaseItem>(array: () => Item[]) => {
   return (
     items: (Partial<Omit<Item, "id">> & { id: string })[],
     strict?: boolean
