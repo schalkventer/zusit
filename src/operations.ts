@@ -90,6 +90,7 @@ type Match<Item extends BaseItem> = {
  *
  */
 export type Get<Item extends BaseItem> = {
+  (operation: null, count?: undefined, assert?: undefined): null;
   (
     operation: string | Predicate<Item> | Match<Item>,
     count: 1,
@@ -141,6 +142,7 @@ const createIterator = (operation: any) => {
  */
 export const createGet = <Item extends BaseItem>(inner: () => Item[]) => {
   const result = (operation: unknown, count = 0, assert: unknown) => {
+    if (operation === null) return null;
     const list = inner();
 
     if (
